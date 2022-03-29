@@ -3,9 +3,9 @@ using System;
 
 namespace Core.Utilities.Interceptors
 {
-    public abstract class MethodInterception : MethodInterceptionBaseAttribute    //invocation lar bir metottur.Biz invocation ı yani metodu burada oluşturduğumuz OnBefore,OnAfter
-    {                                                                             //gibi metotlara yollayarak ne zaman çalışacağını belirleriz.Kodların çoğu OnBefore ve 
-        protected virtual void OnBefore(IInvocation invocation) { }               //OnException da kısmında çalıştırılır.
+    public abstract class MethodInterception : MethodInterceptionBaseAttribute    
+    {                                                                             
+        protected virtual void OnBefore(IInvocation invocation) { }               
         protected virtual void OnAfter(IInvocation invocation) { }
         protected virtual void OnException(IInvocation invocation, System.Exception e) { }
         protected virtual void OnSuccess(IInvocation invocation) { }

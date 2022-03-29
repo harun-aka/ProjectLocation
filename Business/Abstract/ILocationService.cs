@@ -11,10 +11,10 @@ namespace Business.Abstract
 {
     public interface ILocationService  
     {
-        IDataResult<List<Location>> GetAll();
-        IDataResult<Location> GetById(int productId);
-        IResult Add(Location product);
-        IResult Update(Location product);
-        IResult Delete(Location product);
+        IDataResult<List<LocationListDto>> GetAll();
+        IDataResult<Location> GetById(int locationId);
+        IResult Add(LocationEditDto location);
+        IResult Update(LocationEditDto location);
+        IResult Delete(Location location);
     }
 }

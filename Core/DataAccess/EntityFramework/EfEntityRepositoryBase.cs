@@ -13,12 +13,11 @@ namespace Core.DataAccess.EntityFramework
         where TEntity : class, IEntity, new()
         where TContext : DbContext, new()
     {
-        //NuGet 
+
         public void Add(TEntity entity)
         {
-            //IDisposable pattern implemantation of c#
-            using (TContext context = new TContext())//Böyle kullanmak daha performanslı olur.
-                                                                     //Using ile yapmak zorunda değiliz yani.İşi bitince Garbage collector siler.
+            using (TContext context = new TContext())
+                                                                     
             {
                 var addedEntity = context.Entry(entity);
                 addedEntity.State = EntityState.Added;
@@ -36,7 +35,7 @@ namespace Core.DataAccess.EntityFramework
             }
         }
 
-        public TEntity Get(Expression<Func<TEntity, bool>> filter)  //Tek ürün getirirken filtre olmak zorunda bu yüzden filter = null yaparak başlangıç değeri vermedik.
+        public TEntity Get(Expression<Func<TEntity, bool>> filter)  
         {
             using (TContext context = new TContext())
             {
@@ -44,11 +43,10 @@ namespace Core.DataAccess.EntityFramework
             }
         }
 
-        public List<TEntity> GetAll(Expression<Func<TEntity, bool>> filter = null) //Çok ürün getirirken filtre olmak zorunda değil bu yüzden filter = null yaparak başlangıç değeri verdik.
+        public List<TEntity> GetAll(Expression<Func<TEntity, bool>> filter = null) 
         {
             using (TContext context = new TContext())
             {
-                //Products a yerleş liste olarak getir.     //filtre varsa filtreye göre getir.
                 return filter == null
                     ? context.Set<TEntity>().ToList()
                     : context.Set<TEntity>().Where(filter).ToList();

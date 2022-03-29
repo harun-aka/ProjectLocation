@@ -31,7 +31,7 @@ namespace Core.Utilities.Security.JWT
             var signingCredentials = SigningCredentialsHelper.CreateSigningCredentials(securityKey);
             var jwt = CreateJwtSecurityToken(_tokenOptions, user, signingCredentials, operationClaims);
             var jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
-            var token = jwtSecurityTokenHandler.WriteToken(jwt); //String e çevrildi.
+            var token = jwtSecurityTokenHandler.WriteToken(jwt);
 
 
             return new AccessToken
@@ -56,7 +56,7 @@ namespace Core.Utilities.Security.JWT
             return jwt;
         }
 
-        private IEnumerable<Claim> SetClaims(User user, List<OperationClaim> operationClaims) //.Nette bir nesnetye yeni metotlar eklenebilir.
+        private IEnumerable<Claim> SetClaims(User user, List<OperationClaim> operationClaims) 
         {
             var claims = new List<Claim>();
             claims.AddNameIdentifier(user.Id.ToString());

@@ -12,7 +12,21 @@ using System.Threading.Tasks;
 
 namespace DataAccess.Concrete.EntityFramework
 {
-    public class EfLocationDal : EfEntityRepositoryBase<Location, NorthwindContext>, ILocationDal  //EfEntityRepositoryBase IProductDalın işlemlerini yaptığı için hata vermez.
+    public class EfLocationDal : EfEntityRepositoryBase<Location, ProjectLocationContext>, ILocationDal
     {
+        public List<LocationListDto> GetAllListDto()
+        {
+            using (ProjectLocationContext context = new ProjectLocationContext())
+            {
+                var result = from l in context.Locations
+                             select new LocationListDto
+                             {
+                                 Id = l.Id,
+                                 Address = l.Address,
+                                 Name = l.Name
+                             };
+                return result.ToList();
+            }
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Core.Entities;
 using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Entities.Concrete
 {
@@ -8,9 +9,8 @@ namespace Entities.Concrete
         public int Id { get; set; }
         public string Name { get; set; }
         public string Address { get; set; }
-        public DateTime OpeningTime { get; set; }
-        public DateTime ClosingTime { get; set; }
+        public TimeSpan OpeningTime { get; set; }
+        public TimeSpan ClosingTime { get; set; }
         public int TimeZoneId { get; set; }
-
     }
 }

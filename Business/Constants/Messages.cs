@@ -15,7 +15,7 @@ namespace Business.Constants
         public static string ProductNameInvalid = "Ürün ismi geçersiz.";
 
         public static string ProductUpdated = "Ürün güncellendi.";
-        public static string ProductDeleted = "Ürün silindi.";
+        public static string LocationDeleted = "Ürün silindi.";
 
         public static string MaintenanceTime = "Sistem bakımda.";
         public static string LocationsListed = "Ürünler listelendi.";
@@ -31,6 +31,8 @@ namespace Business.Constants
         public static string UserNotFound = "Kullanıcı bulunamadı.";
         public static string UserRegistered = "Kullanıcı kaydedildi.";
         public static string CategoriesListed = "Kategoriler listelendi.";
+        internal static string locationUpdated;
+        internal static string LocationAdded;
 
         public static string TooManyCategoriesToAddProduct { get; internal set; }
     }
