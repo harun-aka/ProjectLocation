@@ -15,6 +15,6 @@ namespace Business.Abstract
         IDataResult<Location> GetById(int locationId);
         IResult Add(LocationEditDto location);
         IResult Update(LocationEditDto location);
-        IResult Delete(Location location);
+        IResult Delete(int locationId);
     }
 }

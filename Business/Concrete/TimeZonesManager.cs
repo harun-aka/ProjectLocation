@@ -20,5 +20,9 @@ namespace Business.Concrete
             return new SuccessDataResult<List<TimeZones>>(_timeZonesDal.GetAll());
         }
 
+        public IDataResult<TimeZones> GetById(int timeZonesId)
+        {
+            return new SuccessDataResult<TimeZones>(_timeZonesDal.Get(tz => tz.Id == timeZonesId));
+        }
     }
 }

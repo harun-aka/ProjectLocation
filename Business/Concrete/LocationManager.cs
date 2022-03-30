@@ -4,40 +4,44 @@ using Business.Constants;
 using Business.ValidationRules.FluentValidation;
 using Core.Aspects.Autofac.Transaction;
 using Core.Aspects.Autofac.Validation;
-using Core.CrossCuttingConcerns.Validation;
 using Core.Utilities.Business;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using Entities.DTOs;
-using FluentValidation;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Business.Concrete
 {
     public class LocationManager : ILocationService
     {
         ILocationDal _locationDal;
+        ITimeZonesService _timeZonesService;
 
-        public LocationManager(ILocationDal locationDal)
+        public LocationManager(ILocationDal locationDal, ITimeZonesService timeZonesService)
         {
             _locationDal = locationDal;
+            _timeZonesService = timeZonesService;
         }
-        
-        //[SecuredOperation("admin")]
+
+        [SecuredOperation("admin")]
         [ValidationAspect(typeof(LocationValidator))]
         [TransactionScopeAspect()]
         public IResult Add (LocationEditDto locationDto)
         {
 
+            IDataResult<TimeZones> timeZonesResult = _timeZonesService.GetById(locationDto.TimeZonesId);
+            if(timeZonesResult.Data == null)
+            {
+                return new ErrorResult(Messages.TimeZoneInvalid);
+            }
+
+
             IResult result = BusinessRules.Run(CheckMinOpenHours(locationDto.OpeningTime, locationDto.ClosingTime), 
                 CheckMaxOpenHours(locationDto.OpeningTime, locationDto.ClosingTime));
 
-            if(!result.Success)
+            if(result != null)
             {
                 return new ErrorResult(result.Message);
             }
@@ -55,36 +59,47 @@ namespace Business.Concrete
             return new SuccessResult(Messages.LocationAdded);
         }
 
-        //[SecuredOperation("admin")]
+        [SecuredOperation("admin")]
         [TransactionScopeAspect()]
-        public IResult Delete(Location location)
+        public IResult Delete(int locationId)
         {
-            _locationDal.Delete(location);
+            IDataResult<Location> result = GetById(locationId);
+            if(result.Data == null)
+            {
+                return new ErrorResult(Messages.LocationNotFound);
+            }
+
+            _locationDal.Delete(result.Data);
             return new SuccessResult(Messages.LocationDeleted);
         }
 
-        //[SecuredOperation("admin,user")]
+        [SecuredOperation("admin,user")]
         public IDataResult<List<LocationListDto>> GetAll()
         {
             return new SuccessDataResult<List<LocationListDto>>(_locationDal.GetAllListDto(),Messages.LocationsListed);
         }
 
-        //[SecuredOperation("admin, user")]
+        [SecuredOperation("admin,user")]
         public IDataResult<Location> GetById(int locationId)
         {
             return new SuccessDataResult<Location>(_locationDal.Get(p => p.Id == locationId));
         }
 
-        //[SecuredOperation("admin")]
+        [SecuredOperation("admin")]
         [ValidationAspect(typeof(LocationValidator))]
         [TransactionScopeAspect()]
         public IResult Update(LocationEditDto locationDto)
         {
+            IDataResult<TimeZones> timeZonesResult = _timeZonesService.GetById(locationDto.TimeZonesId);
+            if (timeZonesResult.Data == null)
+            {
+                return new ErrorResult(Messages.TimeZoneInvalid);
+            }
 
             IResult result = BusinessRules.Run(CheckMinOpenHours(locationDto.OpeningTime, locationDto.ClosingTime),
                 CheckMaxOpenHours(locationDto.OpeningTime, locationDto.ClosingTime));
 
-            if (!result.Success)
+            if (result != null)
             {
                 return new ErrorResult(result.Message);
             }
@@ -114,11 +129,12 @@ namespace Business.Concrete
 
         private static IResult CheckMinOpenHours(DateTime openingtime, DateTime closingTime)
         {
-            if (closingTime.TimeOfDay - openingtime.TimeOfDay < TimeSpan.FromHours(1))
+            if (closingTime.TimeOfDay - openingtime.TimeOfDay < TimeSpan.FromHours(2))
             {
-                return new ErrorResult("Lokasyon en az 1 saat açık kalmalıdır.");
+                return new ErrorResult("Lokasyon en az 2 saat açık kalmalıdır.");
             }
             return new SuccessResult();
         }
+
     }
 }

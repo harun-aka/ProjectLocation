@@ -34,7 +34,7 @@ namespace WebAPI.Controllers
         public IActionResult GetAll()
         {
             var result = _locationService.GetAll();
-            if (result.Success)
+            if (result.Data != null)
             {
                 return Ok(result);
             }
@@ -76,9 +76,9 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("delete")]
-        public IActionResult Delete(Location location)
+        public IActionResult Delete(int locationId)
         {
-            var result = _locationService.Delete(location);
+            var result = _locationService.Delete(locationId);
             if (result.Success)
             {
                 return Ok(result);

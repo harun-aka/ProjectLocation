@@ -20,6 +20,7 @@ namespace Business.ValidationRules.FluentValidation
             RuleFor(l => l.ClosingTime).NotEmpty();
             RuleFor(l => l.ClosingTime).Must(SmallerThan).WithMessage("Kapanma saati en geç 20:00 olabilir.");
             RuleFor(l => l.TimeZonesId).NotEmpty();
+            RuleFor(l => l.TimeZonesId).GreaterThan(0);
         }
 
         private bool GreaterThan(DateTime dateTime)
