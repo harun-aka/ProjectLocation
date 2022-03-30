@@ -13,7 +13,9 @@ namespace DataAccess.Concrete.EntityFramework
     {
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"Server=DESKTOP-5CCLDEP;Database=ProjectLocation;Trusted_Connection=true");
+            //optionsBuilder.UseSqlServer(@"Server=DESKTOP-5CCLDEP;Database=ProjectLocation;Trusted_Connection=true");
+            optionsBuilder.UseSqlServer(@"Server=(localdb)\MSSQLLocalDB;Database=ProjectLocation;Trusted_Connection=true");
+            
         }
         public DbSet<Location> Locations { get; set; }
         public DbSet<TimeZones> TimeZones { get; set; }

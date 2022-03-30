@@ -14,6 +14,6 @@ namespace Entities.DTOs
         public string Address { get; set; }
         public DateTime OpeningTime { get; set; }
         public DateTime ClosingTime { get; set; }
-        public int TimeZoneId { get; set; }
+        public int TimeZonesId { get; set; }
     }
 }

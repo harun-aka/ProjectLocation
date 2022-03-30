@@ -11,6 +11,6 @@ namespace Entities.Concrete
         public string Address { get; set; }
         public TimeSpan OpeningTime { get; set; }
         public TimeSpan ClosingTime { get; set; }
-        public int TimeZoneId { get; set; }
+        public int TimeZonesId { get; set; }
     }
 }

@@ -33,9 +33,13 @@ namespace Business.Concrete
         [TransactionScopeAspect()]
         public IResult Add (LocationEditDto locationDto)
         {
-            if (locationDto.ClosingTime.TimeOfDay - locationDto.OpeningTime.TimeOfDay > TimeSpan.FromHours(8))
+
+            IResult result = BusinessRules.Run(CheckMinOpenHours(locationDto.OpeningTime, locationDto.ClosingTime), 
+                CheckMaxOpenHours(locationDto.OpeningTime, locationDto.ClosingTime));
+
+            if(!result.Success)
             {
-                return new ErrorResult("Lokasyon en fazla 8 saat açık kalabilir.");
+                return new ErrorResult(result.Message);
             }
 
             Location location = new Location
@@ -44,7 +48,7 @@ namespace Business.Concrete
                 Address = locationDto.Address,
                 OpeningTime = locationDto.OpeningTime.TimeOfDay,
                 ClosingTime = locationDto.ClosingTime.TimeOfDay,
-                TimeZoneId = locationDto.TimeZoneId
+                TimeZonesId = locationDto.TimeZonesId
             };
 
             _locationDal.Add(location);
@@ -59,7 +63,7 @@ namespace Business.Concrete
             return new SuccessResult(Messages.LocationDeleted);
         }
 
-        //[SecuredOperation("admin, user")]
+        //[SecuredOperation("admin,user")]
         public IDataResult<List<LocationListDto>> GetAll()
         {
             return new SuccessDataResult<List<LocationListDto>>(_locationDal.GetAllListDto(),Messages.LocationsListed);
@@ -76,6 +80,15 @@ namespace Business.Concrete
         [TransactionScopeAspect()]
         public IResult Update(LocationEditDto locationDto)
         {
+
+            IResult result = BusinessRules.Run(CheckMinOpenHours(locationDto.OpeningTime, locationDto.ClosingTime),
+                CheckMaxOpenHours(locationDto.OpeningTime, locationDto.ClosingTime));
+
+            if (!result.Success)
+            {
+                return new ErrorResult(result.Message);
+            }
+
             Location location = new Location
             {
                 Id = locationDto.Id,
@@ -83,12 +96,29 @@ namespace Business.Concrete
                 Address = locationDto.Address,
                 OpeningTime = locationDto.OpeningTime.TimeOfDay,
                 ClosingTime = locationDto.ClosingTime.TimeOfDay,
-                TimeZoneId = locationDto.TimeZoneId
+                TimeZonesId = locationDto.TimeZonesId
             };
 
             _locationDal.Update(location);
             return new SuccessResult(Messages.locationUpdated);
         }
-        
+
+        private static IResult CheckMaxOpenHours(DateTime openingtime, DateTime closingTime)
+        {
+            if (closingTime.TimeOfDay - openingtime.TimeOfDay > TimeSpan.FromHours(8))
+            {
+                return new ErrorResult("Lokasyon en fazla 8 saat açık kalabilir.");
+            }
+            return new SuccessResult();
+        }
+
+        private static IResult CheckMinOpenHours(DateTime openingtime, DateTime closingTime)
+        {
+            if (closingTime.TimeOfDay - openingtime.TimeOfDay < TimeSpan.FromHours(1))
+            {
+                return new ErrorResult("Lokasyon en az 1 saat açık kalmalıdır.");
+            }
+            return new SuccessResult();
+        }
     }
 }
