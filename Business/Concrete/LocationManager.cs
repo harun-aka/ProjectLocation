@@ -31,17 +31,10 @@ namespace Business.Concrete
         public IResult Add (LocationEditDto locationDto)
         {
 
-            IDataResult<TimeZones> timeZonesResult = _timeZonesService.GetById(locationDto.TimeZonesId);
-            if(timeZonesResult.Data == null)
-            {
-                return new ErrorResult(Messages.TimeZoneInvalid);
-            }
-
-
-            IResult result = BusinessRules.Run(CheckMinOpenHours(locationDto.OpeningTime, locationDto.ClosingTime), 
+            IResult result = BusinessRules.Run(CheckTimeZonesId(locationDto.TimeZonesId, _timeZonesService), CheckMinOpenHours(locationDto.OpeningTime, locationDto.ClosingTime),
                 CheckMaxOpenHours(locationDto.OpeningTime, locationDto.ClosingTime));
 
-            if(result != null)
+            if (result != null)
             {
                 return new ErrorResult(result.Message);
             }
@@ -90,13 +83,8 @@ namespace Business.Concrete
         [TransactionScopeAspect()]
         public IResult Update(LocationEditDto locationDto)
         {
-            IDataResult<TimeZones> timeZonesResult = _timeZonesService.GetById(locationDto.TimeZonesId);
-            if (timeZonesResult.Data == null)
-            {
-                return new ErrorResult(Messages.TimeZoneInvalid);
-            }
 
-            IResult result = BusinessRules.Run(CheckMinOpenHours(locationDto.OpeningTime, locationDto.ClosingTime),
+            IResult result = BusinessRules.Run(CheckTimeZonesId(locationDto.TimeZonesId, _timeZonesService),CheckMinOpenHours(locationDto.OpeningTime, locationDto.ClosingTime),
                 CheckMaxOpenHours(locationDto.OpeningTime, locationDto.ClosingTime));
 
             if (result != null)
@@ -132,6 +120,16 @@ namespace Business.Concrete
             if (closingTime.TimeOfDay - openingtime.TimeOfDay < TimeSpan.FromHours(2))
             {
                 return new ErrorResult("Lokasyon en az 2 saat açık kalmalıdır.");
+            }
+            return new SuccessResult();
+        }
+
+        private static IResult CheckTimeZonesId(int timeZonesId, ITimeZonesService timeZonesService)
+        {
+            IDataResult<TimeZones> timeZonesResult = timeZonesService.GetById(timeZonesId);
+            if (timeZonesResult.Data == null)
+            {
+                return new ErrorResult(Messages.TimeZoneInvalid);
             }
             return new SuccessResult();
         }
