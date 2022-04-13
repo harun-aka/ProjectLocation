@@ -127,6 +127,10 @@ namespace Business.Concrete
         private static IResult CheckTimeZonesId(int timeZonesId, ITimeZonesService timeZonesService)
         {
             IDataResult<TimeZones> timeZonesResult = timeZonesService.GetById(timeZonesId);
+            if (timeZonesResult == null)
+            {
+                return new ErrorResult(Messages.TimeZoneInvalid);
+            }
             if (timeZonesResult.Data == null)
             {
                 return new ErrorResult(Messages.TimeZoneInvalid);
